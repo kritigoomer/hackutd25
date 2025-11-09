@@ -22,61 +22,96 @@ export default function ProductManagerTool() {
     product.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const sendMessage = async () => {
-    if (!inputMessage.trim() || !selectedProduct) return;
+  // const sendMessage = async () => {
+  //   if (!inputMessage.trim() || !selectedProduct) return;
 
-    const userMessage = {
-      type: 'user',
-      content: inputMessage,
-      timestamp: new Date()
+  //   const userMessage = {
+  //     type: 'user',
+  //     content: inputMessage,
+  //     timestamp: new Date()
+  //   };
+
+  //   setChatMessages([...chatMessages, userMessage]);
+  //   setInputMessage('');
+  //   setIsGenerating(true);
+
+  //   // Simulate AI response
+  //   setTimeout(() => {
+  //     const aiResponse = {
+  //       type: 'ai',
+  //       content: `Based on the analysis of ${selectedProduct.name}:\n\nWe are currently on track with most deliverables. However, there are some areas that need attention:\n\n• "Timeline": 2 user stories are at risk of missing their deadlines\n• "Budget": Operating within 5% of allocated budget\n• "Quality": All acceptance criteria are being met\n\n"Recommended Priority Backlog":`,
+  //       backlog: [
+  //         {
+  //           id: 1,
+  //           title: 'Fix payment processing latency',
+  //           priority: 'High',
+  //           deadline: '2 weeks',
+  //           reason: 'Impacting user experience and transaction success rate'
+  //         },
+  //         {
+  //           id: 2,
+  //           title: 'Implement security audit recommendations',
+  //           priority: 'High',
+  //           deadline: '3 weeks',
+  //           reason: 'Critical for compliance requirements'
+  //         },
+  //         {
+  //           id: 3,
+  //           title: 'Add multi-currency support',
+  //           priority: 'Medium',
+  //           deadline: '6 weeks',
+  //           reason: 'Requested by 40% of enterprise clients'
+  //         },
+  //         {
+  //           id: 4,
+  //           title: 'Improve dashboard load time',
+  //           priority: 'Medium',
+  //           deadline: '4 weeks',
+  //           reason: 'Performance optimization for better UX'
+  //         }
+  //       ],
+  //       timestamp: new Date()
+  //     };
+
+  //     setChatMessages(prev => [...prev, aiResponse]);
+  //     setIsGenerating(false);
+  //   }, 2000);
+  // };
+const sendMessage = async () => {
+  if (!inputMessage.trim() || !selectedProduct) return;
+
+  const userMessage = { type: "user", content: inputMessage, timestamp: new Date() };
+  setChatMessages([...chatMessages, userMessage]);
+  setInputMessage("");
+  setIsGenerating(true);
+
+  try {
+    const response = await fetch("http://localhost:3000/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: inputMessage,
+        product: selectedProduct.name,
+      }),
+    });
+
+    const data = await response.json();
+
+    const aiResponse = {
+      type: "ai",
+      content: data.reply || "No response received.",
+      backlog: data.backlog || [],
+      timestamp: new Date(),
     };
 
-    setChatMessages([...chatMessages, userMessage]);
-    setInputMessage('');
-    setIsGenerating(true);
+    setChatMessages((prev) => [...prev, aiResponse]);
+  } catch (error) {
+    console.error("Error connecting to backend:", error);
+  } finally {
+    setIsGenerating(false);
+  }
+};
 
-    // Simulate AI response
-    setTimeout(() => {
-      const aiResponse = {
-        type: 'ai',
-        content: `Based on the analysis of ${selectedProduct.name}:\n\nWe are currently on track with most deliverables. However, there are some areas that need attention:\n\n• "Timeline": 2 user stories are at risk of missing their deadlines\n• "Budget": Operating within 5% of allocated budget\n• "Quality": All acceptance criteria are being met\n\n"Recommended Priority Backlog":`,
-        backlog: [
-          {
-            id: 1,
-            title: 'Fix payment processing latency',
-            priority: 'High',
-            deadline: '2 weeks',
-            reason: 'Impacting user experience and transaction success rate'
-          },
-          {
-            id: 2,
-            title: 'Implement security audit recommendations',
-            priority: 'High',
-            deadline: '3 weeks',
-            reason: 'Critical for compliance requirements'
-          },
-          {
-            id: 3,
-            title: 'Add multi-currency support',
-            priority: 'Medium',
-            deadline: '6 weeks',
-            reason: 'Requested by 40% of enterprise clients'
-          },
-          {
-            id: 4,
-            title: 'Improve dashboard load time',
-            priority: 'Medium',
-            deadline: '4 weeks',
-            reason: 'Performance optimization for better UX'
-          }
-        ],
-        timestamp: new Date()
-      };
-
-      setChatMessages(prev => [...prev, aiResponse]);
-      setIsGenerating(false);
-    }, 2000);
-  };
 
   const syncToJira = () => {
     setIsSyncing(true);
