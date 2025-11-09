@@ -11,11 +11,11 @@ export default function ProductManagerTool() {
   const [isSyncing, setIsSyncing] = useState(false);
 
   const products = [
-    { id: 1, name: 'Mobile Banking App', status: 'Active' },
-    { id: 2, name: 'Payment Gateway', status: 'Active' },
-    { id: 3, name: 'Customer Portal', status: 'In Development' },
-    { id: 4, name: 'Analytics Dashboard', status: 'Active' },
-    { id: 5, name: 'Loan Management System', status: 'Planning' }
+    { id: 1, name: 'Mobile Banking App', projectId: "KAN", status: 'Active' },
+    { id: 2, name: 'Payment Gateway', projectId: "KAN", status: 'Active' },
+    { id: 3, name: 'Customer Portal', projectId: "KAN", status: 'In Development' },
+    { id: 4, name: 'Analytics Dashboard', projectId: "KAN", status: 'Active' },
+    { id: 5, name: 'Loan Management System', projectId: "KAN", status: 'Planning' }
   ];
 
   const filteredProducts = products.filter(product =>
@@ -77,11 +77,85 @@ export default function ProductManagerTool() {
   //     setIsGenerating(false);
   //   }, 2000);
   // };
+// const sendMessage = async () => {
+//   if (!inputMessage.trim() || !selectedProduct) return;
+
+//   const userMessage = { type: "user", content: inputMessage, timestamp: new Date() };
+//   setChatMessages([...chatMessages, userMessage]);
+//   setInputMessage("");
+//   setIsGenerating(true);
+
+//   try {
+//     const response = await fetch("http://localhost:3000/api/chat", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({
+//         message: inputMessage,
+//         product: selectedProduct.name,
+//       }),
+//     });
+
+//     const data = await response.json();
+
+//     const aiResponse = {
+//       type: "ai",
+//       content: data.reply || "No response received.",
+//       backlog: data.backlog || [],
+//       timestamp: new Date(),
+//     };
+
+//     setChatMessages((prev) => [...prev, aiResponse]);
+//   } catch (error) {
+//     console.error("Error connecting to backend:", error);
+//   } finally {
+//     setIsGenerating(false);
+//   }
+// };
+
+// const sendMessage = async () => {
+//   if (!inputMessage.trim() || !selectedProduct) return;
+
+//   const userMessage = {
+//     type: "user",
+//     content: inputMessage,
+//     timestamp: new Date()
+//   };
+//   setChatMessages((prev) => [...prev, userMessage]); // add user message
+//   setInputMessage("");
+//   setIsGenerating(true);
+
+//   try {
+//     const response = await fetch("http://localhost:3000/api/chat", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({
+//         message: inputMessage,           // matches backend
+//         product: selectedProduct.name,  // matches backend
+//       }),
+//     });
+
+//     const data = await response.json();
+
+//     // Add Nemotron response to chat
+//     const aiMessage = {
+//       type: "ai",
+//       content: data.reply || "No response received.", // text from Nemotron
+//       backlog: data.backlog || [],                   // optional backlog
+//       timestamp: new Date(),
+//     };
+
+//     setChatMessages((prev) => [...prev, aiMessage]); // <-- main update: push AI message
+//   } catch (error) {
+//     console.error("Error connecting to backend:", error);
+//   } finally {
+//     setIsGenerating(false);
+//   }
+// };
 const sendMessage = async () => {
   if (!inputMessage.trim() || !selectedProduct) return;
 
   const userMessage = { type: "user", content: inputMessage, timestamp: new Date() };
-  setChatMessages([...chatMessages, userMessage]);
+  setChatMessages((prev) => [...prev, userMessage]);
   setInputMessage("");
   setIsGenerating(true);
 
@@ -90,21 +164,23 @@ const sendMessage = async () => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        message: inputMessage,
-        product: selectedProduct.name,
+        prompt: inputMessage,             // backend expects 'prompt'
+        projectId: selectedProduct.projectId, // <-- send the ID
       }),
     });
 
     const data = await response.json();
+    console.log("frontend sent promp", inputMessage);
+    console.log("backend resoinse", data)
 
-    const aiResponse = {
+    const aiMessage = {
       type: "ai",
       content: data.reply || "No response received.",
       backlog: data.backlog || [],
       timestamp: new Date(),
     };
 
-    setChatMessages((prev) => [...prev, aiResponse]);
+    setChatMessages((prev) => [...prev, aiMessage]);
   } catch (error) {
     console.error("Error connecting to backend:", error);
   } finally {

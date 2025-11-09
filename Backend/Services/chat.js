@@ -19,7 +19,10 @@ router.post("/", async (req, res) => {
       timestamp: new Date()
     });
 
-    res.json({ reply: aiResponse });
+    // res.json({ reply: aiResponse });
+    res.json({ reply: "Hello from backend!", backlog: [] });
+    console.log("chat.js check");
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });
