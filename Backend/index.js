@@ -1,6 +1,6 @@
 import express from "express";
 import users from "./user.js";
-import chatRouter from "./chat.js"; // ✅ add this
+import chatRouter from "./Services/chat.js"; // ✅ add this
 
 console.log("index.js is running");
 const app = express();

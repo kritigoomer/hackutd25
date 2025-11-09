@@ -1,7 +1,7 @@
 import express from "express";
-import { getUserStories } from "./services/jiraService.js";
-import { analyzeStories } from "./services/nemotronService.js";
-import { db } from "./services/firebaseService.js";
+import { getUserStories } from "./jiraService.js";
+import { analyzeStories } from "./nemotronService.js";
+import { db } from "./firebaseService.js";
 
 const router = express.Router();
 
