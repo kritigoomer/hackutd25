@@ -1,5 +1,5 @@
 ## JiraMate
-
+HACKUTD hackathon project submission
 ## Inspiration
 Pain points that product managers endure through struck us hard. We empathized with the need to automate repetitive workflows, where AI wrappers can streamline such work for a product manager, especially the ones that product managers spend the most time in. 
 
